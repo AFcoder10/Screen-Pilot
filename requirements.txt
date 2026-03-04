@@ -1,0 +1,18 @@
+opencv-python>=4.8.0
+mss>=9.0.0
+pyautogui>=0.9.50
+pytesseract>=0.3.10
+numpy>=1.24.0,<2.0.0
+Pillow>=10.0.0
+python-dotenv>=1.0.0
+ultralytics>=8.0.0
+
+# AI/LLM - Install based on your LLM_PROVIDER choice in .env
+# For Gemini:
+google-genai>=0.1.0
+# For OpenAI:
+openai>=1.0.0
+# For Anthropic (Claude):
+anthropic>=0.18.0
+# For Ollama (local models):
+requests>=2.31.0
