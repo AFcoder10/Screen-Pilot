@@ -8,9 +8,6 @@ import json
 import io
 from PIL import Image
 
-# Hardcoded Gemini API Key
-GEMINI_API_KEY = "AIzaSyBIlPztZw12032F_-TfdZ_IhOeCoD7zjYg"
-
 try:
     import google.genai as genai
 except ImportError:
@@ -18,13 +15,15 @@ except ImportError:
     import google.generativeai as genai
     
 from utils.logger import get_logger
+from config.settings import GEMINI_API_KEY, LLM_MODEL
 
 logger = get_logger()
 
 # Configure API - Try different approaches
 try:
-    genai.configure(api_key=GEMINI_API_KEY)
-    logger.info("✓ Gemini API configured successfully")
+    if GEMINI_API_KEY and hasattr(genai, 'configure'):
+        genai.configure(api_key=GEMINI_API_KEY)
+        logger.info("✓ Gemini API configured successfully")
 except AttributeError:
     logger.info("Using alternative Gemini configuration method")
 except Exception as e:
@@ -34,10 +33,14 @@ except Exception as e:
 class GeminiClient:
     """Gemini API client for vision and reasoning tasks"""
     
-    def __init__(self, model_name="gemini-pro-vision"):
-        self.model_name = model_name
+    def __init__(self, model_name=None):
+        self.model_name = model_name or LLM_MODEL or "gemini-pro-vision"
         self.api_key = GEMINI_API_KEY
         self.model = None
+
+        if not self.api_key:
+            logger.error("GEMINI_API_KEY not set. Please add it to .env")
+            return
         
         try:
             # Configure with API key
@@ -45,11 +48,10 @@ class GeminiClient:
                 genai.configure(api_key=self.api_key)
             
             # Create model
-            self.model = genai.GenerativeModel(model_name)
-            logger.info(f"✓ Gemini client initialized with model: {model_name}")
+            self.model = genai.GenerativeModel(self.model_name)
+            logger.info(f"✓ Gemini client initialized with model: {self.model_name}")
         except Exception as e:
             logger.error(f"✗ Error initializing Gemini: {e}")
-            logger.error(f"  Using API key: {self.api_key[:20]}...")
             self.model = None
     
     def image_to_base64(self, image):

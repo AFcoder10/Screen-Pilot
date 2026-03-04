@@ -9,10 +9,12 @@ load_dotenv()
 
 # API Configuration
 # Choose your LLM provider: "gemini", "openai", "anthropic", "ollama"
-LLM_PROVIDER = "gemini"  # Using Gemini
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini").strip().lower()
 
 # API Keys
-GEMINI_API_KEY = "AIzaSyBIlPztZw12032F_-TfdZ_IhOeCoD7zjYg"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
 # Model Configuration
 LLM_MODELS = {
@@ -21,7 +23,7 @@ LLM_MODELS = {
     "anthropic": "claude-3-5-sonnet-20241022",  # Claude 3.5 Sonnet
     "ollama": "llama3.2-vision",  # Local model
 }
-LLM_MODEL = LLM_MODELS.get(LLM_PROVIDER, "gpt-4o")
+LLM_MODEL = os.getenv("LLM_MODEL", LLM_MODELS.get("gemini", "gemini-pro-vision"))
 
 # Ollama Configuration (for local models)
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
